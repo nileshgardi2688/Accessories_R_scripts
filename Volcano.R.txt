@@ -1,0 +1,30 @@
+x<-read.table("b_Vs_a.txt",header=T)
+#p <- ggplot(data=x, aes(x=log2FoldChange, y=-log10(pvalue))) + geom_point()
+#p<-ggplot(data=x, aes(x=log2FoldChange, y=-log10(pvalue))) + geom_point()+ theme_minimal()
+#p2 <- p + geom_vline(xintercept=c(-1.5, 1.5), col="red") + geom_hline(yintercept=-log10(0.05), col="red")
+
+x$diffexpressed <- "NO"
+x$diffexpressed[x$log2FoldChange > 1.5 & x$pvalue < 0.05] <- "UP"
+x$diffexpressed[x$log2FoldChange < -1.5 & x$pvalue < 0.05] <- "DOWN"
+
+p <- ggplot(data=x, aes(x=log2FoldChange, y=-log10(pvalue), col=diffexpressed)) + geom_point() + theme_minimal()
+p2 <- p + geom_vline(xintercept=c(-1.5, 1.5), col="red") + geom_hline(yintercept=-log10(0.05), col="red")
+p3 <- p2 + scale_color_manual(values=c("green", "black", "red"))
+
+x$delabel <- NA
+x$delabel[x$diffexpressed != "NO"] <- x$gene_symbol[x$diffexpressed != "NO"]
+ggplot(data=x, aes(x=log2FoldChange, y=-log10(pvalue), col=diffexpressed, label=delabel)) + 
+    geom_point() + 
+    theme_minimal() +
+    geom_text()
+	
+x<-read.table("CK.txt",header=T)
+x$diffexpressed <- "NO"
+x$diffexpressed[x$log2FoldChange > 2 & x$pvalue < 0.05] <- "UP"
+x$diffexpressed[x$log2FoldChange < -2 & x$pvalue < 0.05] <- "DOWN"
+p <- ggplot(data=x, aes(x=log2FoldChange, y=-log10(pvalue), col=diffexpressed)) + geom_point() + theme_minimal()
+p2 <- p + geom_vline(xintercept=c(-2, 2), col="red") + geom_hline(yintercept=-log10(0.05), col="red")
+p3 <- p2 + scale_color_manual(values=c("blue", "black", "red"))
+p3
+	
+	

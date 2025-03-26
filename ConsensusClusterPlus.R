@@ -1,0 +1,30 @@
+library(ConsensusClusterPlus)############R version 3.1.2
+#########It will not work if expression matrix had NA value
+x<-read.table("tp.txt",header=T,row.names=1)
+x<-as.matrix(x)
+class(x)
+dim(x)
+mads=apply(x,1,mad)
+x<-x[rev(order(mads))[1:127],]###### Total number of genes (e.g. notch related genes)
+d=sweep(x,1,apply(x,1,median,na.rm=T))
+d<-ConsensusClusterPlus(d,maxK=6,reps=50,pItem=0.8,verbose=F,pFeature=1,clusterAlg="hc",distance="pearson",writeTable=T,plot="png",title="k=6 and pearson",innerLinkage="average", finalLinkage="average")
+calcICL(d,title="untitled_consensus_cluster",plot="png",writeTable=T)
+
+#########Silhouette
+library(cluster)
+x<- read.table("data.txt", header=T)    ####Genes in columns and samples in rows
+y <- pam(daisy(x), 2, diss=T)
+write.table(y$clustering,"2.txt",sep="\t")
+png("2.png")
+plot(y,col=c("red","green"))
+dev.off()
+y <- pam(daisy(x), 3, diss=T)
+write.table(y$clustering,"3.txt",sep="\t")
+png("3.png")
+plot(y,col=c("red","green","blue"))
+dev.off()
+y <- pam(daisy(x), 4, diss=T)
+write.table(y$clustering,"4.txt",sep="\t")
+png("4.png")
+plot(y,col=c("red","green","blue","yellow"))
+dev.off()
